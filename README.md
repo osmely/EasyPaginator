@@ -5,7 +5,9 @@ Un mecanismo simple para paginado en UITableView
 
 # Modo de uso
 
-//Declarar el paginable
+Declarar el paginable, que contiene la estructura de datos de la app.
+
+```swift
 struct PaginableUser : PaginableObject {
     typealias type = User
     
@@ -16,12 +18,19 @@ struct PaginableUser : PaginableObject {
     var data: User
     var page: Int
 }
+```
 
+Crear el paginador
 
-//crear el paginador
+```swift
   let paginator = PaginableArray<PaginableUser>()
+```
+    
+    
+En contexto dentro de la clase usar como se muestra a continuación:
 
-//En contexto dentro de la clase
+```swift
+    //pedir nueva página
     func nextUserPage() {
         let page = self.paginator.lastPageAdded + 1
         self.requestUser(keywords: self.text, page: page)
@@ -37,12 +46,8 @@ struct PaginableUser : PaginableObject {
             .subscribe(
                 onNext: { [weak self] (users) in
                     
-                    self?.placeholder?
-                        .configure(
-                            title: "Users",
-                            subtitle: "No users to show"
-                    )
-                    
+                    //en el refresh se pide a server con page 1, 
+                    //y el paginador tiene data, entonces limpiar!
                     if page == 1 {
                         self?.paginator.clear()
                     }
@@ -58,11 +63,9 @@ struct PaginableUser : PaginableObject {
             }).disposed(by: self.disposeBag)
         
     }
-
-
-
-
-extension AddFriendsViewController: UITableViewDelegate, UITableViewDataSource {
+    
+    
+    //UITableViewDelegate, UITableViewDataSource
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         self.placeholder?.animatePlaceholderView(showPlaceholder: self.paginator.elements.isEmpty, animated: true)
@@ -78,8 +81,6 @@ extension AddFriendsViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         ....
     }
-
-}
-
+```
 
 
