@@ -1,6 +1,6 @@
 # EasyPaginator
-Un mecanismo simple para paginado en UITableView
 
+Un mecanismo simple para paginado en UITableView que permite llevar el control de los datos que se agregan evitando duplicados y llevando la ultima página agregada. 
 
 
 # Modo de uso
@@ -45,18 +45,20 @@ En contexto dentro de la clase usar como se muestra a continuación:
         ).rx_execute()
             .subscribe(
                 onNext: { [weak self] (users) in
+                
+                    self?.refreshControl.endRefreshing()
                     
                     //en el refresh se pide a server con page 1, 
                     //y el paginador tiene data, entonces limpiar!
                     if page == 1 {
                         self?.paginator.clear()
                     }
-                    
-                    self?.refreshControl.endRefreshing()
+                
+                    //agregando objetos paginables
                     self?.paginator.add(users.map{PaginableUser($0, page: page)})
-                    
-                    self?.isLoading.accept(false)
+
                     self?.tableview.reloadData()
+                    self?.isLoading.accept(false)
                 },
                 onError: { [weak self](error) in
                     self?.refreshControl.endRefreshing()
@@ -82,5 +84,9 @@ En contexto dentro de la clase usar como se muestra a continuación:
         ....
     }
 ```
+
+# Instalación
+
+Simplemente agrege el único fichero .swift en algun lugar del proyecto.
 
 
